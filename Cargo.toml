@@ -1,5 +1,8 @@
 [package]
 name = "lolicon_api"
+license = "MIT"
+authors = ["poly000"]
+description = "Lolicon API wrapper in Rust"
 version = "0.1.0"
 edition = "2018"
 
