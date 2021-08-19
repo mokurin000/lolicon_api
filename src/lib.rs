@@ -1,10 +1,15 @@
 pub use thiserror::Error;
 
+use convert::Argument;
+
+mod convert;
+
 #[derive(Debug, Error, Copy, Clone)]
 pub enum LoliError {
-    IlleagalNum,
-    IlleagalSize,
-    IlleagalUidLen,
+    IllegalNum,
+    IllegalSize,
+    IllegalUidLen,
+    IllegalTags,
 }
 
 impl std::fmt::Display for LoliError {
@@ -14,6 +19,11 @@ impl std::fmt::Display for LoliError {
     }
 }
 
+struct Tag(Option<Vec<String>>);
+struct Size(Option<Vec<String>>);
+struct DataAfter(u64);
+struct DataBefore(u64);
+
 #[derive(Clone, Debug)]
 pub struct Request {
     /// Non-R18 by default.
@@ -22,18 +32,18 @@ pub struct Request {
     num: Option<u8>,
     /// specified authors. at most 20s.
     uid: Option<Vec<u32>>,
-    /// Not very conveninent. you should consider use tags instead.
+    /// Not very convenient. you should consider use tags instead.
     keyword: Option<String>,
     /// at most 20s
-    tag: Option<Vec<String>>,
-    /// avaliable values are `response::Object`'s variants.
-    size: Option<Vec<String>>,
-    /// proxy for `pixiv.net`, `i.pixiv.cat`, e.g.
+    tag: Tag,
+    /// available values were defined in its setter.
+    size: Size,
+    /// proxy for `pixiv.net`, `i.pixiv.cat`, e.g. See [Lolicon](https://api.lolicon.app/#/setu?id=proxy) for detail.
     proxy: Option<String>,
     /// Only show artworks after this UNIX time in millisecond.
-    date_after: Option<u64>,
+    date_after: DataAfter,
     /// Only show artworks before this UNIX time in millisecond.
-    date_before: Option<u64>,
+    date_before: DataBefore,
     /// If this is `true`, some automatic convert between keywords and tags will be disabled.
     dsc: Option<bool>,
 }
@@ -57,7 +67,7 @@ impl Request {
                 self.num = Some(amount);
                 Ok(self)
             }
-            _ => Err(LoliError::IlleagalNum),
+            _ => Err(LoliError::IllegalNum),
         }
     }
 
@@ -67,7 +77,7 @@ impl Request {
                 self.uid = Some(authors);
                 Ok(self)
             }
-            _ => Err(LoliError::IlleagalUidLen),
+            _ => Err(LoliError::IllegalUidLen),
         }
     }
 
@@ -75,54 +85,42 @@ impl Request {
         self.keyword = Some(keyword);
         self
     }
+
+    pub fn tag(mut self, tag: Vec<String>) -> Result<Self, LoliError> {
+        match tag.len() {
+            1..=20 => {
+                self.tag.0 = Some(tag);
+                Ok(self)
+            },
+            _ => Err(LoliError::IllegalTags),
+        }
+    }
+
+    pub fn size(mut self, size_list: Vec<String>) -> Result<Self, LoliError> {
+        let sizes = ["original", "regular", "small", "thumb", "mini"];
+        match size_list.len() {
+            1..=5 => {
+                for size in size_list {
+                    if !sizes.contains(&size.as_str()) {
+                        return Err(LoliError::IllegalSize);
+                    }
+                }
+                Ok(self)
+            }
+            _ => return Err(LoliError::IllegalSize),
+        }
+    }
 }
 
 impl Into<String> for Request {
     fn into(self) -> String {
         let mut url: String = "https://api.lolicon.app/setu/v2?".into();
-        self.r18.into_argument(&mut url);
-        self.num.into_argument(&mut url);
-        self.uid.into_argument(&mut url);
+        self.r18.argument(&mut url);
+        self.num.argument(&mut url);
+        self.uid.argument(&mut url);
+        self.keyword.argument(&mut url);
+        self.tag.argument(&mut url);
+        self.size.argument(&mut url);
         url
-    }
-}
-
-trait IntoArgument {
-    fn into_argument(&self, url: &mut String);
-}
-
-impl IntoArgument for Option<R18> {
-    fn into_argument(&self, url: &mut String) {
-        let argu = if let Some(r) = self {
-            match r {
-                R18::NonR18 => "&r18=0",
-                R18::R18 => "&r18=1",
-                R18::Mixin => "&r18=2",
-            }
-        } else {
-            "&r18=0"
-        };
-
-        url.push_str(&argu);
-    }
-}
-
-impl IntoArgument for Option<u8> {
-    fn into_argument(&self, url: &mut String) {
-        if let Some(num) = self {
-            let argu = format!("&num={}", num);
-            url.push_str(&argu);
-        }
-    }
-}
-
-impl IntoArgument for Option<Vec<u32>> {
-    fn into_argument(&self, url: &mut String) {
-        if let Some(uid_list) = self {
-            for uid in uid_list {
-                let argu = format!("&uid={}", uid);
-                url.push_str(&argu);
-            }
-        }
     }
 }
