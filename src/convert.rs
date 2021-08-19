@@ -1,8 +1,8 @@
-use crate::R18;
-use crate::Tag;
-use crate::Size;
 use crate::DataAfter;
 use crate::DataBefore;
+use crate::Size;
+use crate::Tag;
+use crate::R18;
 
 pub trait Argument {
     fn argument(&self, url: &mut String);

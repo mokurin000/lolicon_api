@@ -19,11 +19,6 @@ impl std::fmt::Display for LoliError {
     }
 }
 
-struct Tag(Option<Vec<String>>);
-struct Size(Option<Vec<String>>);
-struct DataAfter(u64);
-struct DataBefore(u64);
-
 #[derive(Clone, Debug)]
 pub struct Request {
     /// Non-R18 by default.
@@ -47,6 +42,18 @@ pub struct Request {
     /// If this is `true`, some automatic convert between keywords and tags will be disabled.
     dsc: Option<bool>,
 }
+
+#[derive(Debug, Clone)]
+struct Tag(Option<Vec<String>>);
+
+#[derive(Debug, Clone)]
+struct Size(Option<Vec<String>>);
+
+#[derive(Debug, Clone)]
+struct DataAfter(u64);
+
+#[derive(Debug, Clone)]
+struct DataBefore(u64);
 
 #[derive(Copy, Clone, Debug)]
 pub enum R18 {
@@ -91,7 +98,7 @@ impl Request {
             1..=20 => {
                 self.tag.0 = Some(tag);
                 Ok(self)
-            },
+            }
             _ => Err(LoliError::IllegalTags),
         }
     }
