@@ -107,12 +107,12 @@ impl Request {
         let sizes = ["original", "regular", "small", "thumb", "mini"];
         match size_list.len() {
             1..=5 => {
-                for size in size_list {
+                for size in &size_list {
                     if !sizes.contains(&size.as_str()) {
                         return Err(LoliError::IllegalSize);
                     }
                 }
-                self.0 = Some(size_list);
+                self.size.0 = Some(size_list);
                 Ok(self)
             }
             _ => return Err(LoliError::IllegalSize),
