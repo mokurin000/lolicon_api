@@ -1,7 +1,7 @@
 pub use thiserror::Error;
 
 #[derive(Debug, Error, Copy, Clone)]
-enum LoliError {
+pub enum LoliError {
     IlleagalNum,
     IlleagalSize,
     IlleagalUidLen,
@@ -15,7 +15,7 @@ impl std::fmt::Display for LoliError {
 }
 
 #[derive(Clone, Debug)]
-struct Request {
+pub struct Request {
     /// Non-R18 by default.
     r18: Option<R18>,
     /// amount of result's artworks. 1-100 is legal.
@@ -45,15 +45,14 @@ pub enum R18 {
     Mixin,
 }
 
-#[allow(dead_code)]
 impl Request {
 
-    fn r18(mut self, r: R18) -> Self {
+    pub fn r18(mut self, r: R18) -> Self {
         self.r18 = Some(r);
         self
     }
 
-    fn num(mut self, amount: u8) -> Result<Self, LoliError> {
+    pub fn num(mut self, amount: u8) -> Result<Self, LoliError> {
         match amount {
             1..=100 => {
                 self.num = Some(amount);
@@ -65,7 +64,7 @@ impl Request {
         } 
     }
 
-    fn uid(mut self, authors: Vec<u32>) -> Result<Self, LoliError> {
+    pub fn uid(mut self, authors: Vec<u32>) -> Result<Self, LoliError> {
         match authors.len() {
             1..=20 => {
                 self.uid = Some(authors);
@@ -77,7 +76,7 @@ impl Request {
         }
     }
 
-    fn keyword(mut self, keyword: String) -> Self {
+    pub fn keyword(mut self, keyword: String) -> Self {
         self.keyword = Some(keyword);
         self
     }
