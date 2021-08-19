@@ -1,11 +1,10 @@
 use crate::Error;
 
-#[allow(dead_code)]
 #[derive(Debug, Error, Copy, Clone)]
 enum LoliError {
     IlleagalNum,
     IlleagalSize,
-    TooManyUid,
+    IlleagalUidLen,
 }
 
 impl std::fmt::Display for LoliError {
@@ -39,7 +38,6 @@ struct Request {
     dsc: Option<bool>,
 }
 
-#[allow(dead_code)]
 #[derive(Copy, Clone, Debug)]
 pub enum R18 {
     NonR18,
@@ -68,11 +66,14 @@ impl Request {
     }
 
     fn uid(mut self, authors: Vec<u32>) -> Result<Self, LoliError> {
-        if authors.len() <= 20 {
-            self.uid = Some(authors);
-            Ok(self)
-        } else {
-            Err(LoliError::TooManyUid)
+        match authors.len() {
+            1..=20 => {
+                self.uid = Some(authors);
+                Ok(self)
+            }
+            _ => {
+                Err(LoliError::IlleagalUidLen)
+            }
         }
     }
 
@@ -86,18 +87,20 @@ impl Request {
 impl Into<String> for Request {
     fn into(self) -> String {
         let mut url: String = "https://api.lolicon.app/setu/v2?".into();
-        url += &self.r18.into_argument();
+        self.r18.into_argument(&mut url);
+        self.num.into_argument(&mut url);
+        self.uid.into_argument(&mut url);
         url
     }
 }
 
 trait IntoArgument {
-    fn into_argument(&self) -> String;
+    fn into_argument(&self, url: &mut String);
 }
 
 impl IntoArgument for Option<R18> {
-    fn into_argument(&self) -> String {
-        if let Some(r) = self {
+    fn into_argument(&self, url: &mut String) {
+        let argu = if let Some(r) = self {
             match r {
                 R18::NonR18 => {
                     "&r18=0"
@@ -111,6 +114,28 @@ impl IntoArgument for Option<R18> {
             }
         } else {
             "&r18=0"
-        } .into()
+        };
+
+        url.push_str(&argu);
+    }
+}
+
+impl IntoArgument for Option<u8> {
+    fn into_argument(&self, url: &mut String) {
+        if let Some(num) = self {
+            let argu =  format!("&num={}", num);
+            url.push_str(&argu);
+        }
+    }
+}
+
+impl IntoArgument for Option<Vec<u32>> {
+    fn into_argument(&self, url: &mut String) {
+        if let Some(uid_list) = self {
+            for uid in uid_list {
+                let argu = format!("&uid={}", uid);
+                url.push_str(&argu);
+            }
+        } 
     }
 }
