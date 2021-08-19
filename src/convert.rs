@@ -10,17 +10,14 @@ pub trait Argument {
 
 impl Argument for Option<R18> {
     fn argument(&self, url: &mut String) {
-        let argument = if let Some(r) = self {
-            match r {
+        if let Some(r) = self {
+            let argument = match r {
                 R18::NonR18 => "&r18=0",
                 R18::R18 => "&r18=1",
                 R18::Mixin => "&r18=2",
-            }
-        } else {
-            "&r18=0"
-        };
-
-        url.push_str(argument);
+            };
+            url.push_str(argument);
+        }
     }
 }
 
@@ -55,7 +52,7 @@ impl Argument for Option<String> {
 
 impl Argument for Tag {
     fn argument(&self, url: &mut String) {
-        if let Some(ref tag_list) = self.0 {
+        if let Tag(Some(ref tag_list)) = self {
             for tag in tag_list {
                 let argument = format!("&tag={}", tag);
                 url.push_str(&argument);
@@ -66,7 +63,7 @@ impl Argument for Tag {
 
 impl Argument for Size {
     fn argument(&self, url: &mut String) {
-        if let Some(ref size_list) = self.0 {
+        if let Size(Some(ref size_list)) = self {
             for size in size_list {
                 let argument = format!("&size={}", size);
                 url.push_str(&argument);

@@ -50,16 +50,33 @@ struct Tag(Option<Vec<String>>);
 struct Size(Option<Vec<String>>);
 
 #[derive(Debug, Clone)]
-struct DataAfter(u64);
+struct DataAfter(Option<u64>);
 
 #[derive(Debug, Clone)]
-struct DataBefore(u64);
+struct DataBefore(Option<u64>);
 
 #[derive(Copy, Clone, Debug)]
 pub enum R18 {
     NonR18,
     R18,
     Mixin,
+}
+
+impl std::default::Default for Request {
+    fn default() -> Self {
+        Request {
+            r18: None,
+            num: None,
+            uid: None,
+            keyword: None,
+            tag: Tag(None),
+            size: Size(None),
+            proxy: None,
+            date_after: DataAfter(None),
+            date_before: DataBefore(None),
+            dsc: None,
+        }
+    }
 }
 
 impl Request {
