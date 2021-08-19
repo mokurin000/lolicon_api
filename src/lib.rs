@@ -115,20 +115,20 @@ impl Request {
                 self.size.0 = Some(size_list);
                 Ok(self)
             }
-            _ => return Err(LoliError::IllegalSize),
+            _ => Err(LoliError::IllegalSize),
         }
     }
 }
 
-impl Into<String> for Request {
-    fn into(self) -> String {
+impl From<Request> for String {
+    fn from(req: Request) -> Self {
         let mut url: String = "https://api.lolicon.app/setu/v2?".into();
-        self.r18.argument(&mut url);
-        self.num.argument(&mut url);
-        self.uid.argument(&mut url);
-        self.keyword.argument(&mut url);
-        self.tag.argument(&mut url);
-        self.size.argument(&mut url);
+        req.r18.argument(&mut url);
+        req.num.argument(&mut url);
+        req.uid.argument(&mut url);
+        req.keyword.argument(&mut url);
+        req.tag.argument(&mut url);
+        req.size.argument(&mut url);
         url
     }
 }

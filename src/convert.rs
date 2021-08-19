@@ -20,7 +20,7 @@ impl Argument for Option<R18> {
             "&r18=0"
         };
 
-        url.push_str(&argument);
+        url.push_str(argument);
     }
 }
 
