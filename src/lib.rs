@@ -46,7 +46,6 @@ pub enum R18 {
 }
 
 impl Request {
-
     pub fn r18(mut self, r: R18) -> Self {
         self.r18 = Some(r);
         self
@@ -58,10 +57,8 @@ impl Request {
                 self.num = Some(amount);
                 Ok(self)
             }
-            _ => {
-                Err(LoliError::IlleagalNum)
-            }
-        } 
+            _ => Err(LoliError::IlleagalNum),
+        }
     }
 
     pub fn uid(mut self, authors: Vec<u32>) -> Result<Self, LoliError> {
@@ -70,9 +67,7 @@ impl Request {
                 self.uid = Some(authors);
                 Ok(self)
             }
-            _ => {
-                Err(LoliError::IlleagalUidLen)
-            }
+            _ => Err(LoliError::IlleagalUidLen),
         }
     }
 
@@ -80,7 +75,6 @@ impl Request {
         self.keyword = Some(keyword);
         self
     }
-
 }
 
 impl Into<String> for Request {
@@ -101,15 +95,9 @@ impl IntoArgument for Option<R18> {
     fn into_argument(&self, url: &mut String) {
         let argu = if let Some(r) = self {
             match r {
-                R18::NonR18 => {
-                    "&r18=0"
-                }
-                R18::R18 => {
-                    "&r18=1"
-                }
-                R18::Mixin => {
-                    "&r18=2"
-                }
+                R18::NonR18 => "&r18=0",
+                R18::R18 => "&r18=1",
+                R18::Mixin => "&r18=2",
             }
         } else {
             "&r18=0"
@@ -122,7 +110,7 @@ impl IntoArgument for Option<R18> {
 impl IntoArgument for Option<u8> {
     fn into_argument(&self, url: &mut String) {
         if let Some(num) = self {
-            let argu =  format!("&num={}", num);
+            let argu = format!("&num={}", num);
             url.push_str(&argu);
         }
     }
@@ -135,6 +123,6 @@ impl IntoArgument for Option<Vec<u32>> {
                 let argu = format!("&uid={}", uid);
                 url.push_str(&argu);
             }
-        } 
+        }
     }
 }
