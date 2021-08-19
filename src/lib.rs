@@ -112,6 +112,7 @@ impl Request {
                         return Err(LoliError::IllegalSize);
                     }
                 }
+                self.0 = Some(size_list);
                 Ok(self)
             }
             _ => return Err(LoliError::IllegalSize),
