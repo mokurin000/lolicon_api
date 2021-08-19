@@ -1,4 +1,5 @@
 [package]
+repository = "https://github.com/poly000/lolicon_api"
 name = "lolicon_api"
 license = "GPL-3.0"
 authors = ["poly000"]
