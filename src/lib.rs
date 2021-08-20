@@ -80,11 +80,13 @@ impl std::default::Default for Request {
 }
 
 impl Request {
+    /// set whether the result includes R18 artworks.
     pub fn r18(mut self, r: R18) -> Self {
         self.r18 = Some(r);
         self
     }
 
+    /// set amount of result's artworks.
     pub fn num(mut self, amount: u8) -> Result<Self, LoliError> {
         match amount {
             1..=100 => {
@@ -95,6 +97,7 @@ impl Request {
         }
     }
 
+    /// set artworks' authors.
     pub fn uid(mut self, authors: Vec<u32>) -> Result<Self, LoliError> {
         match authors.len() {
             1..=20 => {
@@ -105,11 +108,13 @@ impl Request {
         }
     }
 
+    /// set keyword.
     pub fn keyword(mut self, keyword: String) -> Self {
         self.keyword = Some(keyword);
         self
     }
 
+    /// set tags.
     pub fn tag(mut self, tag: Vec<String>) -> Result<Self, LoliError> {
         match tag.len() {
             1..=20 => {
@@ -120,6 +125,7 @@ impl Request {
         }
     }
 
+    /// set sizes. `original`, `regular`, `small`, `thumb`, `mini` are available.
     pub fn size(mut self, size_list: Vec<String>) -> Result<Self, LoliError> {
         let sizes = ["original", "regular", "small", "thumb", "mini"];
         match size_list.len() {
