@@ -36,9 +36,9 @@ pub struct Request {
     /// proxy for `pixiv.net`, `i.pixiv.cat`, e.g. See [Lolicon](https://api.lolicon.app/#/setu?id=proxy) for detail.
     proxy: Proxy,
     /// Only show artworks after this UNIX time in millisecond.
-    date_after: DataAfter,
+    date_after: DateAfter,
     /// Only show artworks before this UNIX time in millisecond.
-    date_before: DataBefore,
+    date_before: DateBefore,
     /// If this is `true`, some automatic convert between keywords and tags will be disabled.
     dsc: Option<bool>,
 }
@@ -56,10 +56,10 @@ struct Size(Option<Vec<String>>);
 struct Proxy(Option<String>);
 
 #[derive(Debug, Clone)]
-struct DataAfter(Option<u64>);
+struct DateAfter(Option<u64>);
 
 #[derive(Debug, Clone)]
-struct DataBefore(Option<u64>);
+struct DateBefore(Option<u64>);
 
 #[derive(Copy, Clone, Debug)]
 pub enum R18 {
@@ -78,8 +78,8 @@ impl std::default::Default for Request {
             tag: Tag(None),
             size: Size(None),
             proxy: Proxy(None),
-            date_after: DataAfter(None),
-            date_before: DataBefore(None),
+            date_after: DateAfter(None),
+            date_before: DateBefore(None),
             dsc: None,
         }
     }
@@ -165,6 +165,9 @@ impl From<Request> for String {
         url.add_argument(req.tag);
         url.add_argument(req.size);
         url.add_argument(req.proxy);
+        url.add_argument(req.date_after);
+        url.add_argument(req.date_before);
+        url.add_argument(req.dsc);
 
         url
     }

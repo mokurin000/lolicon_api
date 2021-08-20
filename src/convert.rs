@@ -1,5 +1,5 @@
-use crate::DataAfter;
-use crate::DataBefore;
+use crate::DateAfter;
+use crate::DateBefore;
 use crate::Keyword;
 use crate::Size;
 use crate::Tag;
@@ -78,6 +78,33 @@ impl Argument for Proxy {
     fn argument(&self, url: &mut String) {
         if let Proxy(Some(ref proxy)) = self {
             let argument = format!("&proxy={}", proxy);
+            url.push_str(&argument);
+        }
+    }
+}
+
+impl Argument for DateAfter {
+    fn argument(&self, url: &mut String) {
+        if let DateAfter(Some(date)) = self {
+            let argument = format!("&dataAfter={}", date);
+            url.push_str(&argument);
+        }
+    }
+}
+
+impl Argument for DateBefore {
+    fn argument(&self, url: &mut String) {
+        if let DateBefore(Some(date)) = self {
+            let argument = format!("&dataBefore={}", date);
+            url.push_str(&argument);
+        }
+    }
+}
+
+impl Argument for Option<bool> {
+    fn argument(&self, url: &mut String) {
+        if let Some(dsc) = self {
+            let argument = format!("&dsc={:?}", dsc);
             url.push_str(&argument);
         }
     }
