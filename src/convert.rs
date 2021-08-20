@@ -1,9 +1,9 @@
 use crate::DateAfter;
 use crate::DateBefore;
 use crate::Keyword;
+use crate::Proxy;
 use crate::Size;
 use crate::Tag;
-use crate::Proxy;
 use crate::R18;
 
 pub trait Argument {
