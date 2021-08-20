@@ -12,7 +12,7 @@ impl Argument for Option<R18> {
     fn argument(&self, url: &mut String) {
         if let Some(r) = self {
             let argument = match r {
-                R18::NonR18 => "&r18=0",
+                R18::NonR18 => return, // default behavior
                 R18::R18 => "&r18=1",
                 R18::Mixin => "&r18=2",
             };
