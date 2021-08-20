@@ -28,13 +28,13 @@ pub struct Request {
     /// specified authors. at most 20s.
     uid: Option<Vec<u32>>,
     /// Not very convenient. you should consider use tags instead.
-    keyword: Option<String>,
+    keyword: Keyword,
     /// at most 20s
     tag: Tag,
     /// available values were defined in its setter.
     size: Size,
     /// proxy for `pixiv.net`, `i.pixiv.cat`, e.g. See [Lolicon](https://api.lolicon.app/#/setu?id=proxy) for detail.
-    proxy: Option<String>,
+    proxy: Proxy,
     /// Only show artworks after this UNIX time in millisecond.
     date_after: DataAfter,
     /// Only show artworks before this UNIX time in millisecond.
@@ -44,10 +44,16 @@ pub struct Request {
 }
 
 #[derive(Debug, Clone)]
+struct Keyword(Option<String>);
+
+#[derive(Debug, Clone)]
 struct Tag(Option<Vec<String>>);
 
 #[derive(Debug, Clone)]
 struct Size(Option<Vec<String>>);
+
+#[derive(Debug, Clone)]
+struct Proxy(Option<String>);
 
 #[derive(Debug, Clone)]
 struct DataAfter(Option<u64>);
@@ -68,10 +74,10 @@ impl std::default::Default for Request {
             r18: None,
             num: None,
             uid: None,
-            keyword: None,
+            keyword: Keyword(None),
             tag: Tag(None),
             size: Size(None),
-            proxy: None,
+            proxy: Proxy(None),
             date_after: DataAfter(None),
             date_before: DataBefore(None),
             dsc: None,
@@ -109,8 +115,8 @@ impl Request {
     }
 
     /// set keyword.
-    pub fn keyword(mut self, keyword: String) -> Self {
-        self.keyword = Some(keyword);
+    pub fn keyword(mut self, keyword: impl Into<String>) -> Self {
+        self.keyword.0 = Some(keyword.into());
         self
     }
 
@@ -141,6 +147,11 @@ impl Request {
             _ => Err(LoliError::IllegalSize),
         }
     }
+
+    pub fn proxy(mut self, proxy: impl Into<String>) -> Self {
+        self.proxy.0 = Some(proxy.into());
+        self
+    }
 }
 
 impl From<Request> for String {
@@ -153,6 +164,7 @@ impl From<Request> for String {
         url.add_argument(req.keyword);
         url.add_argument(req.tag);
         url.add_argument(req.size);
+        url.add_argument(req.proxy);
 
         url
     }

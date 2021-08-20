@@ -1,7 +1,9 @@
 use crate::DataAfter;
 use crate::DataBefore;
+use crate::Keyword;
 use crate::Size;
 use crate::Tag;
+use crate::Proxy;
 use crate::R18;
 
 pub trait Argument {
@@ -41,9 +43,9 @@ impl Argument for Option<Vec<u32>> {
     }
 }
 
-impl Argument for Option<String> {
+impl Argument for Keyword {
     fn argument(&self, url: &mut String) {
-        if let Some(key) = self {
+        if let Keyword(Some(key)) = self {
             let argument = format!("&keyword={}", key);
             url.push_str(&argument);
         }
@@ -68,6 +70,15 @@ impl Argument for Size {
                 let argument = format!("&size={}", size);
                 url.push_str(&argument);
             }
+        }
+    }
+}
+
+impl Argument for Proxy {
+    fn argument(&self, url: &mut String) {
+        if let Proxy(Some(ref proxy)) = self {
+            let argument = format!("&proxy={}", proxy);
+            url.push_str(&argument);
         }
     }
 }
