@@ -146,12 +146,15 @@ impl Request {
 impl From<Request> for String {
     fn from(req: Request) -> Self {
         let mut url: String = "https://api.lolicon.app/setu/v2?".into();
-        req.r18.argument(&mut url);
-        req.num.argument(&mut url);
-        req.uid.argument(&mut url);
-        req.keyword.argument(&mut url);
-        req.tag.argument(&mut url);
-        req.size.argument(&mut url);
+        let add_argument = |x: impl Argument| x.argument(&mut url);
+
+        add_argument(req.r18);
+        add_argument(req.num);
+        add_argument(req.uid);
+        add_argument(req.keyword);
+        add_argument(req.tag);
+        add_argument(req.size);
+
         url
     }
 }
