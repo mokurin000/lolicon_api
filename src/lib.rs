@@ -44,22 +44,22 @@ pub struct Request {
 }
 
 #[derive(Debug, Clone)]
-struct Keyword(Option<String>);
+pub struct Keyword(Option<String>);
 
 #[derive(Debug, Clone)]
-struct Tag(Option<Vec<String>>);
+pub struct Tag(Option<Vec<String>>);
 
 #[derive(Debug, Clone)]
-struct Size(Option<Vec<String>>);
+pub struct Size(Option<Vec<String>>);
 
 #[derive(Debug, Clone)]
-struct Proxy(Option<String>);
+pub struct Proxy(Option<String>);
 
 #[derive(Debug, Clone)]
-struct DateAfter(Option<u64>);
+pub struct DateAfter(Option<u64>);
 
 #[derive(Debug, Clone)]
-struct DateBefore(Option<u64>);
+pub struct DateBefore(Option<u64>);
 
 #[derive(Copy, Clone, Debug)]
 pub enum R18 {
