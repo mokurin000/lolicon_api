@@ -5,13 +5,17 @@
 //! ```rust
 //! use lolicon_api::Request;
 //! use lolicon_api::R18;
+//! use lolicon_api::ImageSize;
+//!
 //! let req = Request::default()
 //!     .r18(R18::R18) // R-18
 //!     .num(1).unwrap() // 一张
-//!     .uid(vec![16731]).unwrap(); // 玉之けだま老师
+//!     .uid(vec![16731]).unwrap() // 玉之けだま老师
+//!     .size(vec![ImageSize::Original]).unwrap(); // 原图（默认行为）
+//!
 //! let req_url = String::from(req);
 //!
-//! assert_eq!(&req_url, "https://api.lolicon.app/setu/v2?&r18=1&num=1&uid=16731");
+//! assert_eq!(&req_url, "https://api.lolicon.app/setu/v2?&r18=1&num=1&uid=16731&size=original");
 //! ```
 //!
 //! **Note:** `req_url`'s fields does not graduated to be the same sort as building.
@@ -19,6 +23,7 @@
 pub use thiserror::Error;
 
 use convert::Argument;
+use std::fmt::Formatter;
 
 mod convert;
 
@@ -49,7 +54,7 @@ pub struct Request {
     keyword: Keyword,
     /// at most 20s, at least one.
     tag: Tag,
-    /// available values were defined in its setter.
+    /// size of images.
     size: Size,
     /// proxy for `pixiv.net`, `i.pixiv.cat`, e.g. See [Lolicon](https://api.lolicon.app/#/setu?id=proxy) for detail.
     proxy: Proxy,
@@ -60,38 +65,6 @@ pub struct Request {
     /// If this is `true`, some automatic convert between keywords and tags will be disabled.
     dsc: Option<bool>,
 }
-
-#[derive(Copy, Clone, Debug)]
-/// Non-R18 by default.
-pub enum R18 {
-    NonR18,
-    R18,
-    Mixin,
-}
-
-#[derive(Debug, Clone)]
-/// Not very convenient. you should consider use tags instead.
-pub struct Keyword(Option<String>);
-
-#[derive(Debug, Clone)]
-/// at most 20s, at least one.
-pub struct Tag(Option<Vec<String>>);
-
-#[derive(Debug, Clone)]
-/// available values were defined in its setter.
-pub struct Size(Option<Vec<String>>);
-
-#[derive(Debug, Clone)]
-/// proxy for `pixiv.net`, `i.pixiv.cat`, e.g. See [Lolicon](https://api.lolicon.app/#/setu?id=proxy) for detail.
-pub struct Proxy(Option<String>);
-
-#[derive(Debug, Clone)]
-/// Only show artworks after this UNIX time in millisecond.
-pub struct DateAfter(Option<u64>);
-
-#[derive(Debug, Clone)]
-/// Only show artworks before this UNIX time in millisecond.
-pub struct DateBefore(Option<u64>);
 
 impl std::default::Default for Request {
     fn default() -> Self {
@@ -156,16 +129,10 @@ impl Request {
         }
     }
 
-    /// set sizes. `original`, `regular`, `small`, `thumb`, `mini` are available.
-    pub fn size(mut self, size_list: Vec<String>) -> Result<Self, LoliError> {
-        let sizes = ["original", "regular", "small", "thumb", "mini"];
+    /// set sizes.
+    pub fn size(mut self, size_list: Vec<ImageSize>) -> Result<Self, LoliError> {
         match size_list.len() {
             1..=5 => {
-                for size in &size_list {
-                    if !sizes.contains(&size.as_str()) {
-                        return Err(LoliError::IllegalSize);
-                    }
-                }
                 self.size.0 = Some(size_list);
                 Ok(self)
             }
@@ -195,6 +162,60 @@ impl Request {
     pub fn dsc(mut self, dsc: bool) -> Self {
         self.dsc = Some(dsc);
         self
+    }
+}
+
+#[derive(Copy, Clone, Debug)]
+/// Non-R18 by default.
+pub enum R18 {
+    NonR18,
+    R18,
+    Mixin,
+}
+
+#[derive(Debug, Clone)]
+/// Not very convenient. you should consider use tags instead.
+pub struct Keyword(Option<String>);
+
+#[derive(Debug, Clone)]
+/// at most 20s, at least one.
+pub struct Tag(Option<Vec<String>>);
+
+#[derive(Debug, Clone)]
+/// available values were defined in its setter.
+pub struct Size(Option<Vec<ImageSize>>);
+
+#[derive(Debug, Clone)]
+pub enum ImageSize {
+    Original,
+    Regular,
+    Small,
+    Thumb,
+    Mini,
+}
+
+#[derive(Debug, Clone)]
+/// proxy for `pixiv.net`, `i.pixiv.cat`, e.g. See [Lolicon](https://api.lolicon.app/#/setu?id=proxy) for detail.
+pub struct Proxy(Option<String>);
+
+#[derive(Debug, Clone)]
+/// Only show artworks after this UNIX time in millisecond.
+pub struct DateAfter(Option<u64>);
+
+#[derive(Debug, Clone)]
+/// Only show artworks before this UNIX time in millisecond.
+pub struct DateBefore(Option<u64>);
+
+impl std::fmt::Display for ImageSize {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let parameter = match self {
+            ImageSize::Original => "original",
+            ImageSize::Regular => "regular",
+            ImageSize::Small => "small",
+            ImageSize::Thumb => "thumb",
+            ImageSize::Mini => "mini",
+        };
+        write!(f, "{}", parameter)
     }
 }
 
