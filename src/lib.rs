@@ -10,8 +10,8 @@
 //! let req = Request::default()
 //!     .r18(R18::R18) // R-18
 //!     .num(1).unwrap() // 一张
-//!     .uid(vec![16731]).unwrap() // 玉之けだま老师
-//!     .size(vec![ImageSize::Original]).unwrap(); // 原图（默认行为）
+//!     .uid(&[16731]).unwrap() // 玉之けだま老师
+//!     .size(&[ImageSize::Original]).unwrap(); // 原图（默认行为）
 //!
 //! let req_url = String::from(req);
 //!

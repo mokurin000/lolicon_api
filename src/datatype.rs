@@ -131,10 +131,10 @@ impl Request {
     }
 
     /// set artworks' authors.
-    pub fn uid(mut self, authors: Vec<u32>) -> Result<Self, LoliError> {
+    pub fn uid(mut self, authors: &[u32]) -> Result<Self, LoliError> {
         match authors.len() {
             1..=20 => {
-                self.uid = Some(authors);
+                self.uid = Some(authors.into());
                 Ok(self)
             }
             _ => Err(LoliError::IllegalUidLen),
@@ -148,10 +148,10 @@ impl Request {
     }
 
     /// set tags.
-    pub fn tag(mut self, tag: Vec<String>) -> Result<Self, LoliError> {
+    pub fn tag(mut self, tag: &[String]) -> Result<Self, LoliError> {
         match tag.len() {
             1..=20 => {
-                self.tag.0 = Some(tag);
+                self.tag.0 = Some(tag.into());
                 Ok(self)
             }
             _ => Err(LoliError::IllegalTags),
@@ -159,10 +159,10 @@ impl Request {
     }
 
     /// set sizes.
-    pub fn size(mut self, size_list: Vec<ImageSize>) -> Result<Self, LoliError> {
+    pub fn size(mut self, size_list: &[ImageSize]) -> Result<Self, LoliError> {
         match size_list.len() {
             1..=5 => {
-                self.size.0 = Some(size_list);
+                self.size.0 = Some(size_list.into());
                 Ok(self)
             }
             _ => Err(LoliError::IllegalSize),
