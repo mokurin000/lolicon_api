@@ -1,4 +1,4 @@
-use std::fmt::Formatter;
+use std::fmt::{Formatter, Display};
 use thiserror::Error as Error;
 use crate::convert::Argument;
 
@@ -194,33 +194,39 @@ impl Request {
     }
 }
 
-impl From<Request> for String {
-    fn from(req: Request) -> Self {
+impl Display for Request {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let mut url: String = "https://api.lolicon.app/setu/v2?".into();
 
-        url.add_argument(req.r18);
-        url.add_argument(req.num);
-        url.add_argument(req.uid);
-        url.add_argument(req.keyword);
-        url.add_argument(req.tag);
-        url.add_argument(req.size);
-        url.add_argument(req.proxy);
-        url.add_argument(req.date_after);
-        url.add_argument(req.date_before);
-        url.add_argument(req.dsc);
+        url.add_argument(&self.r18);
+        url.add_argument(&self.num);
+        url.add_argument(&self.uid);
+        url.add_argument(&self.keyword);
+        url.add_argument(&self.tag);
+        url.add_argument(&self.size);
+        url.add_argument(&self.proxy);
+        url.add_argument(&self.date_after);
+        url.add_argument(&self.date_before);
+        url.add_argument(&self.dsc);
 
-        url
+        write!(f, "{}", url)
+    }
+}
+
+impl From<Request> for String {
+    fn from(request: Request) -> Self {
+        request.to_string()
     }
 }
 
 trait AddArgument {
     /// to convert a argument into url field.
-    fn add_argument(&mut self, object: impl Argument);
+    fn add_argument(&mut self, object: &impl Argument);
 }
 
 impl AddArgument for String {
     /// to convert a argument into url field.
-    fn add_argument(&mut self, object: impl Argument) {
+    fn add_argument(&mut self, object: &impl Argument) {
         object.argument(self);
     }
 }
