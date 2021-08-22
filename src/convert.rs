@@ -1,10 +1,10 @@
-use crate::DateAfter;
-use crate::DateBefore;
-use crate::Keyword;
-use crate::Proxy;
-use crate::Size;
-use crate::Tag;
-use crate::R18;
+use crate::datatype::DateAfter;
+use crate::datatype::DateBefore;
+use crate::datatype::Keyword;
+use crate::datatype::Proxy;
+use crate::datatype::Size;
+use crate::datatype::Tag;
+use crate::datatype::R18;
 
 pub trait Argument {
     fn argument(&self, url: &mut String);
