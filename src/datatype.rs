@@ -15,10 +15,6 @@ pub enum R18 {
 pub(crate) struct Keyword(pub(crate) Option<String>);
 
 #[derive(Debug, Clone)]
-/// at most 20s, at least one.
-pub(crate) struct Tag(pub(crate) Option<Vec<String>>);
-
-#[derive(Debug, Clone)]
 /// available values were defined in its setter.
 pub(crate) struct Size(pub(crate) Option<Vec<ImageSize>>);
 
@@ -82,7 +78,7 @@ pub struct Request {
     /// Not very convenient. you should consider use `tag` instead.
     keyword: Keyword,
     /// at most 20s, at least one.
-    tag: Tag,
+    tag: Option<Vec<String>>,
     /// size of images.
     size: Size,
     /// proxy for `pixiv.net`, `i.pixiv.cat`, e.g. See [Lolicon](https://api.lolicon.app/#/setu?id=proxy) for detail.
@@ -102,7 +98,7 @@ impl std::default::Default for Request {
             num: None, // 1 by default
             uid: None,
             keyword: Keyword(None),
-            tag: Tag(None),
+            tag: None,
             size: Size(None), // ["original"] by default
             proxy: Proxy(None), // `i.pixiv.cat` by default
             date_after: DateAfter(None),
@@ -151,7 +147,7 @@ impl Request {
     pub fn tag(mut self, tag: &[String]) -> Result<Self, LoliError> {
         match tag.len() {
             1..=20 => {
-                self.tag.0 = Some(tag.into());
+                self.tag = Some(tag.into());
                 Ok(self)
             }
             _ => Err(LoliError::IllegalTags),

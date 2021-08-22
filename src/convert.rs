@@ -3,7 +3,6 @@ use crate::datatype::DateBefore;
 use crate::datatype::Keyword;
 use crate::datatype::Proxy;
 use crate::datatype::Size;
-use crate::datatype::Tag;
 use crate::datatype::R18;
 
 pub trait Argument {
@@ -52,9 +51,9 @@ impl Argument for Keyword {
     }
 }
 
-impl Argument for Tag {
+impl Argument for Option<Vec<String>> {
     fn argument(&self, url: &mut String) {
-        if let Tag(Some(ref tag_list)) = self {
+        if let Some(ref tag_list) = self {
             for tag in tag_list {
                 let argument = format!("&tag={}", tag);
                 url.push_str(&argument);
