@@ -103,7 +103,7 @@ impl Argument for DateBefore {
 impl Argument for Option<bool> {
     fn argument(&self, url: &mut String) {
         if let Some(dsc) = self {
-            let argument = format!("&dsc={:?}", dsc);
+            let argument = format!("&dsc={}", dsc);
             url.push_str(&argument);
         }
     }
