@@ -28,11 +28,28 @@ pub use datatype::{Class, Error, ImageSize};
 
 #[test]
 fn test_num_out_of_range() {
-    assert_eq!(out_of_range(), Err(Error::OutOfRange { range: 0..=100, actual: 200, filed: "" }));
+    assert_eq!(
+        out_of_range(),
+        Err(Error::OutOfRange {
+            range: 0..=100,
+            actual: 200,
+            filed: ""
+        })
+    );
+}
+
+#[test]
+fn test_zero_as_num() {
+    // there is no `r18=0` in params, as it's by default.
+    assert_eq!(Request::default().num(0).unwrap().class(Class::NonR18).to_string(), "https://api.lolicon.app/setu/v2?&num=0")
 }
 
 #[cfg(test)]
 fn out_of_range() -> Result<(), Error> {
-    let _ = Request::default().size(&[])?.uid(&[])?.class(Class::R18).num(200)?;
+    let _ = Request::default()
+        .size(&[])?
+        .uid(&[])?
+        .class(Class::R18)
+        .num(200)?;
     Ok(())
 }

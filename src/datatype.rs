@@ -5,7 +5,7 @@ use std::{
 };
 use thiserror::Error;
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 /// Non-R18 by default.
 pub enum Class {
     NonR18,
@@ -13,11 +13,11 @@ pub enum Class {
     Mixin,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 /// Not very convenient. you should consider use tags instead.
 pub(crate) struct Keyword(pub(crate) String);
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 /// available values were defined in its setter.
 pub(crate) struct Size(pub(crate) Vec<ImageSize>);
 
@@ -30,15 +30,15 @@ pub enum ImageSize {
     Mini,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 /// proxy for `pixiv.net`, `i.pixiv.cat`, e.g. See [Lolicon](https://api.lolicon.app/#/setu?id=proxy) for detail.
 pub(crate) struct Proxy(pub(crate) String);
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 /// Only show artworks after this UNIX time in millisecond.
 pub(crate) struct DateAfter(pub(crate) u64);
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 /// Only show artworks before this UNIX time in millisecond.
 pub(crate) struct DateBefore(pub(crate) u64);
 
@@ -69,7 +69,7 @@ pub enum Error {
 }
 
 #[must_use]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Request {
     /// Non-R18 by default.
     class: Class,
@@ -116,7 +116,7 @@ impl Request {
         Self { class, ..self }
     }
 
-    /// set amount of result's artworks. 1-100 is allowed.
+    /// set amount of result's artworks. 0-100 is allowed.
     pub fn num(self, amount: u8) -> Result<Self, Error> {
         if (0..=100).contains(&amount) {
             Ok(Self {
