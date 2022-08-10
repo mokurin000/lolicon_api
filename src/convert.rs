@@ -1,40 +1,38 @@
+use crate::datatype::Class;
 use crate::datatype::DateAfter;
 use crate::datatype::DateBefore;
 use crate::datatype::Keyword;
 use crate::datatype::Proxy;
 use crate::datatype::Size;
-use crate::datatype::Class;
+use crate::ImageSize;
 
 pub trait Argument {
     fn argument(&self, url: &mut String);
 }
 
-impl Argument for Option<Class> {
+impl Argument for Class {
     fn argument(&self, url: &mut String) {
-        if let Some(r) = self {
-            let argument = match r {
-                Class::NonR18 => return, // default behavior
-                Class::R18 => "&r18=1",
-                Class::Mixin => "&r18=2",
-            };
-            url.push_str(argument);
+        let argument = match self {
+            Class::NonR18 => return,
+            Class::R18 => "&r18=1",
+            Class::Mixin => "&r18=2",
+        };
+        url.push_str(argument);
+    }
+}
+
+impl Argument for u8 {
+    fn argument(&self, url: &mut String) {
+        if self != &1 {
+            url.push_str(&format!("&num={self}"));
         }
     }
 }
 
-impl Argument for Option<u8> {
+impl Argument for Vec<u32> {
     fn argument(&self, url: &mut String) {
-        if let Some(num) = self {
-            let argument = format!("&num={}", num);
-            url.push_str(&argument);
-        }
-    }
-}
-
-impl Argument for Option<Vec<u32>> {
-    fn argument(&self, url: &mut String) {
-        if let Some(uid_list) = self {
-            for uid in uid_list {
+        if !self.is_empty() {
+            for uid in self {
                 let argument = format!("&uid={}", uid);
                 url.push_str(&argument);
             }
@@ -42,20 +40,19 @@ impl Argument for Option<Vec<u32>> {
     }
 }
 
-impl Argument for Keyword {
+impl Argument for Option<Keyword> {
     fn argument(&self, url: &mut String) {
-        if let Keyword(Some(key)) = self {
-            let argument = format!("&keyword={}", key);
-            url.push_str(&argument);
+        if let Some(Keyword(key)) = self {
+            url.push_str(&format!("&keyword={key}"));
         }
     }
 }
 
-impl Argument for Option<Vec<String>> {
+impl Argument for Vec<String> {
     fn argument(&self, url: &mut String) {
-        if let Some(ref tag_list) = self {
-            for tag in tag_list {
-                let argument = format!("&tag={}", tag);
+        if !self.is_empty() {
+            for tag in self {
+                let argument = format!("&tag={tag}");
                 url.push_str(&argument);
             }
         }
@@ -64,10 +61,10 @@ impl Argument for Option<Vec<String>> {
 
 impl Argument for Size {
     fn argument(&self, url: &mut String) {
-        if let Size(Some(ref size_list)) = self {
+        let Size(ref size_list) = self;
+        if size_list != &[ImageSize::Original] {
             for size in size_list {
-                let argument = format!("&size={}", size);
-                url.push_str(&argument);
+                url.push_str(&format!("&size={size}"));
             }
         }
     }
@@ -75,36 +72,33 @@ impl Argument for Size {
 
 impl Argument for Proxy {
     fn argument(&self, url: &mut String) {
-        if let Proxy(Some(ref proxy)) = self {
-            let argument = format!("&proxy={}", proxy);
-            url.push_str(&argument);
+        let Proxy(ref proxy) = self;
+        if proxy != "i.pixiv.cat" {
+            url.push_str(&format!("&proxy={proxy}"));
         }
     }
 }
 
-impl Argument for DateAfter {
+impl Argument for Option<DateAfter> {
     fn argument(&self, url: &mut String) {
-        if let DateAfter(Some(date)) = self {
-            let argument = format!("&dataAfter={}", date);
-            url.push_str(&argument);
+        if let Some(DateAfter(date)) = self {
+            url.push_str(&format!("&dataAfter={date}"));
         }
     }
 }
 
-impl Argument for DateBefore {
+impl Argument for Option<DateBefore> {
     fn argument(&self, url: &mut String) {
-        if let DateBefore(Some(date)) = self {
-            let argument = format!("&dataBefore={}", date);
-            url.push_str(&argument);
+        if let Some(DateBefore(date)) = self {
+            url.push_str(&format!("&dataBefore={date}"));
         }
     }
 }
 
-impl Argument for Option<bool> {
+impl Argument for bool {
     fn argument(&self, url: &mut String) {
-        if let Some(dsc) = self {
-            let argument = format!("&dsc={}", dsc);
-            url.push_str(&argument);
+        if *self {
+            url.push_str(&format!("&dsc=true"))
         }
     }
 }
