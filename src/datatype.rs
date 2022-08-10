@@ -1,10 +1,10 @@
-use std::fmt::{Formatter, Display};
-use thiserror::Error as Error;
 use crate::convert::Argument;
+use std::fmt::{Display, Formatter};
+use thiserror::Error;
 
 #[derive(Copy, Clone, Debug)]
 /// Non-R18 by default.
-pub enum R18 {
+pub enum Class {
     NonR18,
     R18,
     Mixin,
@@ -70,7 +70,7 @@ impl std::fmt::Display for LoliError {
 #[derive(Clone, Debug)]
 pub struct Request {
     /// Non-R18 by default.
-    r18: Option<R18>,
+    class: Option<Class>,
     /// amount of result's artworks. 1-100 is legal.
     num: Option<u8>,
     /// specified authors. at most 20s, at least one.
@@ -94,12 +94,12 @@ pub struct Request {
 impl std::default::Default for Request {
     fn default() -> Self {
         Request {
-            r18: None, // Non-R18 by default
+            class: None, // Non-R18 by default
             num: None, // 1 by default
             uid: None,
             keyword: Keyword(None),
             tag: None,
-            size: Size(None), // ["original"] by default
+            size: Size(None),   // ["original"] by default
             proxy: Proxy(None), // `i.pixiv.cat` by default
             date_after: DateAfter(None),
             date_before: DateBefore(None),
@@ -110,30 +110,28 @@ impl std::default::Default for Request {
 
 impl Request {
     /// set whether the result includes R18 artworks.
-    pub fn r18(mut self, r: R18) -> Self {
-        self.r18 = Some(r);
+    pub fn class(mut self, r: Class) -> Self {
+        self.class = Some(r);
         self
     }
 
     /// set amount of result's artworks. 1-100 is legal.
     pub fn num(mut self, amount: u8) -> Result<Self, LoliError> {
-        match amount {
-            1..=100 => {
-                self.num = Some(amount);
-                Ok(self)
-            }
-            _ => Err(LoliError::IllegalNum),
+        if (1..=100).contains(&amount) {
+            self.num = Some(amount);
+            Ok(self)
+        } else {
+            Err(LoliError::IllegalNum)
         }
     }
 
     /// set artworks' authors.
     pub fn uid(mut self, authors: &[u32]) -> Result<Self, LoliError> {
-        match authors.len() {
-            1..=20 => {
-                self.uid = Some(authors.into());
-                Ok(self)
-            }
-            _ => Err(LoliError::IllegalUidLen),
+        if (1..=20).contains(&authors.len()) {
+            self.uid = Some(authors.into());
+            Ok(self)
+        } else {
+            Err(LoliError::IllegalUidLen)
         }
     }
 
@@ -145,23 +143,21 @@ impl Request {
 
     /// set tags.
     pub fn tag(mut self, tag: &[String]) -> Result<Self, LoliError> {
-        match tag.len() {
-            1..=20 => {
-                self.tag = Some(tag.into());
-                Ok(self)
-            }
-            _ => Err(LoliError::IllegalTags),
+        if (1..=20).contains(&tag.len()) {
+            self.tag = Some(tag.into());
+            Ok(self)
+        } else {
+            Err(LoliError::IllegalTags)
         }
     }
 
     /// set sizes.
     pub fn size(mut self, size_list: &[ImageSize]) -> Result<Self, LoliError> {
-        match size_list.len() {
-            1..=5 => {
-                self.size.0 = Some(size_list.into());
-                Ok(self)
-            }
-            _ => Err(LoliError::IllegalSize),
+        if (1..=5).contains(&size_list.len()) {
+            self.size.0 = Some(size_list.into());
+            Ok(self)
+        } else {
+            Err(LoliError::IllegalSize)
         }
     }
 
@@ -194,7 +190,7 @@ impl Display for Request {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let mut url: String = "https://api.lolicon.app/setu/v2?".into();
 
-        url.add_argument(&self.r18);
+        url.add_argument(&self.class);
         url.add_argument(&self.num);
         url.add_argument(&self.uid);
         url.add_argument(&self.keyword);

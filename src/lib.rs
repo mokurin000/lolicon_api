@@ -4,11 +4,11 @@
 //!
 //! ```rust
 //! use lolicon_api::Request;
-//! use lolicon_api::R18;
+//! use lolicon_api::Class;
 //! use lolicon_api::ImageSize;
 //!
 //! let req = Request::default()
-//!     .r18(R18::R18) // R-18
+//!     .class(Class::R18) // R-18
 //!     .num(1).unwrap() // 一张
 //!     .uid(&[16731]).unwrap() // 玉之けだま老师
 //!     .size(&[ImageSize::Original]).unwrap(); // 原图（默认行为）
@@ -25,4 +25,4 @@ mod convert;
 mod datatype;
 
 pub use datatype::Request;
-pub use datatype::{R18, ImageSize, LoliError};
+pub use datatype::{Class, ImageSize, LoliError};

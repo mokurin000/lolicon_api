@@ -3,19 +3,19 @@ use crate::datatype::DateBefore;
 use crate::datatype::Keyword;
 use crate::datatype::Proxy;
 use crate::datatype::Size;
-use crate::datatype::R18;
+use crate::datatype::Class;
 
 pub trait Argument {
     fn argument(&self, url: &mut String);
 }
 
-impl Argument for Option<R18> {
+impl Argument for Option<Class> {
     fn argument(&self, url: &mut String) {
         if let Some(r) = self {
             let argument = match r {
-                R18::NonR18 => return, // default behavior
-                R18::R18 => "&r18=1",
-                R18::Mixin => "&r18=2",
+                Class::NonR18 => return, // default behavior
+                Class::R18 => "&r18=1",
+                Class::Mixin => "&r18=2",
             };
             url.push_str(argument);
         }
