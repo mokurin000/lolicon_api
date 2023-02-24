@@ -33,8 +33,7 @@ impl Parameterize for Vec<u32> {
     fn param(&self, url: &mut String) {
         if !self.is_empty() {
             for uid in self {
-                let argument = format!("&uid={}", uid);
-                url.push_str(&argument);
+                url.push_str(&format!("&uid={uid}"));
             }
         }
     }
@@ -52,8 +51,7 @@ impl Parameterize for Vec<String> {
     fn param(&self, url: &mut String) {
         if !self.is_empty() {
             for tag in self {
-                let argument = format!("&tag={tag}");
-                url.push_str(&argument);
+                url.push_str(&format!("&tag={tag}"));
             }
         }
     }

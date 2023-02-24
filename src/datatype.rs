@@ -232,7 +232,7 @@ impl From<Request> for String {
 
 trait AddArgument {
     /// append a argument into url field.
-    fn append(&mut self, object: &impl Parameterize);
+    fn append(&mut self, option: &impl Parameterize);
 }
 
 impl AddArgument for String {
