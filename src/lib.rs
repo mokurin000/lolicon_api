@@ -4,11 +4,11 @@
 //!
 //! ```rust
 //! use lolicon_api::Request;
-//! use lolicon_api::Class;
+//! use lolicon_api::Category;
 //! use lolicon_api::ImageSize;
 //!
 //! let req = Request::default()
-//!     .class(Class::R18) // R-18
+//!     .category(Category::R18) // R-18
 //!     .num(1).unwrap() // 一张
 //!     .uid(&[16731]).unwrap() // 玉之けだま老师
 //!     .size(&[ImageSize::Original]).unwrap(); // 原图（默认行为）
@@ -24,7 +24,7 @@ mod convert;
 mod datatype;
 
 pub use datatype::Request;
-pub use datatype::{Class, Error, ImageSize};
+pub use datatype::{Category, Error, ImageSize};
 
 #[test]
 fn test_num_out_of_range() {
@@ -41,7 +41,7 @@ fn test_num_out_of_range() {
 #[test]
 fn test_zero_as_num() {
     // there is no `r18=0` in params, as it's by default.
-    assert_eq!(Request::default().num(0).unwrap().class(Class::NonR18).to_string(), "https://api.lolicon.app/setu/v2?&num=0")
+    assert_eq!(Request::default().num(0).unwrap().category(Category::NonR18).to_string(), "https://api.lolicon.app/setu/v2?&num=0")
 }
 
 #[cfg(test)]
@@ -49,7 +49,7 @@ fn out_of_range() -> Result<(), Error> {
     let _ = Request::default()
         .size(&[])?
         .uid(&[])?
-        .class(Class::R18)
+        .category(Category::R18)
         .num(200)?;
     Ok(())
 }

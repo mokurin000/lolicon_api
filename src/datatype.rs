@@ -1,13 +1,17 @@
-use crate::convert::Argument;
+use strum::Display;
+
+use crate::convert::Parameterize;
+
 use std::{
     fmt::{Display, Formatter},
     ops::RangeInclusive,
 };
+
 use thiserror::Error;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 /// Non-R18 by default.
-pub enum Class {
+pub enum Category {
     NonR18,
     R18,
     Mixin,
@@ -21,7 +25,8 @@ pub(crate) struct Keyword(pub(crate) String);
 /// available values were defined in its setter.
 pub(crate) struct Size(pub(crate) Vec<ImageSize>);
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Display)]
+#[strum(serialize_all = "lowercase")]
 pub enum ImageSize {
     Original,
     Regular,
@@ -42,19 +47,6 @@ pub(crate) struct DateAfter(pub(crate) u64);
 /// Only show artworks before this UNIX time in millisecond.
 pub(crate) struct DateBefore(pub(crate) u64);
 
-impl std::fmt::Display for ImageSize {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let parameter = match self {
-            ImageSize::Original => "original",
-            ImageSize::Regular => "regular",
-            ImageSize::Small => "small",
-            ImageSize::Thumb => "thumb",
-            ImageSize::Mini => "mini",
-        };
-        write!(f, "{}", parameter)
-    }
-}
-
 /// the only possible error is invalid fields passed to `Request`'s setters
 /// e.g. `num` cannot greater than 100
 #[derive(Debug, Error, Clone, PartialEq, Eq)]
@@ -72,7 +64,7 @@ pub enum Error {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Request {
     /// Non-R18 by default.
-    class: Class,
+    category: Category,
     /// amount of result's artworks. 1-100 is allowed.
     num: u8,
     /// specified authors. at most 20s, at least one.
@@ -96,7 +88,7 @@ pub struct Request {
 impl std::default::Default for Request {
     fn default() -> Self {
         Request {
-            class: Class::NonR18,
+            category: Category::NonR18,
             num: 1,
             uid: vec![],
             keyword: None,
@@ -112,8 +104,8 @@ impl std::default::Default for Request {
 
 impl Request {
     /// set whether the result includes R18 artworks.
-    pub fn class(self, class: Class) -> Self {
-        Self { class, ..self }
+    pub fn category(self, category: Category) -> Self {
+        Self { category, ..self }
     }
 
     /// set amount of result's artworks. 0-100 is allowed.
@@ -217,16 +209,16 @@ impl Display for Request {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let mut url: String = "https://api.lolicon.app/setu/v2?".into();
 
-        url.add_argument(&self.class);
-        url.add_argument(&self.date_after);
-        url.add_argument(&self.date_before);
-        url.add_argument(&self.dsc);
-        url.add_argument(&self.keyword);
-        url.add_argument(&self.num);
-        url.add_argument(&self.proxy);
-        url.add_argument(&self.size);
-        url.add_argument(&self.tag);
-        url.add_argument(&self.uid);
+        url.append(&self.category);
+        url.append(&self.date_after);
+        url.append(&self.date_before);
+        url.append(&self.dsc);
+        url.append(&self.keyword);
+        url.append(&self.num);
+        url.append(&self.proxy);
+        url.append(&self.size);
+        url.append(&self.tag);
+        url.append(&self.uid);
 
         write!(f, "{}", url)
     }
@@ -239,13 +231,12 @@ impl From<Request> for String {
 }
 
 trait AddArgument {
-    /// to convert a argument into url field.
-    fn add_argument(&mut self, object: &impl Argument);
+    /// append a argument into url field.
+    fn append(&mut self, object: &impl Parameterize);
 }
 
 impl AddArgument for String {
-    /// to convert a argument into url field.
-    fn add_argument(&mut self, object: &impl Argument) {
-        object.argument(self);
+    fn append(&mut self, option: &impl Parameterize) {
+        option.param(self);
     }
 }
