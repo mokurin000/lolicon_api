@@ -148,10 +148,10 @@ impl Request {
     }
 
     /// set tags.
-    pub fn tag(self, tag: &[String]) -> Result<Self, Error> {
+    pub fn tag(self, tag: &[impl AsRef<str>]) -> Result<Self, Error> {
         if (1..=20).contains(&tag.len()) {
             Ok(Self {
-                tag: tag.into(),
+                tag: tag.iter().map(AsRef::as_ref).map(String::from).collect(),
                 ..self
             })
         } else {
