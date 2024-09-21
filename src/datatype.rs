@@ -82,8 +82,16 @@ pub struct Request {
     /// Only show artworks before this UNIX time in millisecond.
     date_before: Option<DateBefore>,
     /// If this is `true`, some automatic convert between keywords and tags will be disabled.
-    dsc: bool,
+    dsc: Dsc,
+    /// exclude AI artworks
+    exclude_ai: ExcludeAI,
 }
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) struct Dsc(pub bool);
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) struct ExcludeAI(pub bool);
 
 impl std::default::Default for Request {
     fn default() -> Self {
@@ -97,7 +105,8 @@ impl std::default::Default for Request {
             proxy: Proxy("i.pixiv.cat".into()),
             date_after: None,
             date_before: None,
-            dsc: false,
+            dsc: Dsc(false),
+            exclude_ai: ExcludeAI(false),
         }
     }
 }
@@ -143,9 +152,11 @@ impl Request {
     }
 
     /// set keyword.
-    pub fn keyword(mut self, keyword: impl Into<String>) -> Self {
-        self.keyword = Some(Keyword(keyword.into()));
-        self
+    pub fn keyword(self, keyword: impl Into<String>) -> Self {
+        Self {
+            keyword: Some(Keyword(keyword.into())),
+            ..self
+        }
     }
 
     /// set tags.
@@ -189,20 +200,35 @@ impl Request {
     }
 
     /// Only show artworks after this UNIX time in millisecond.
-    pub fn date_after(mut self, date_after: u64) -> Self {
-        self.date_after = Some(DateAfter(date_after));
-        self
+    pub fn date_after(self, date_after: u64) -> Self {
+        Self {
+            date_after: Some(DateAfter(date_after)),
+            ..self
+        }
     }
 
     /// Only show artworks before this UNIX time in millisecond.
-    pub fn date_before(mut self, date_before: u64) -> Self {
-        self.date_before = Some(DateBefore(date_before));
-        self
+    pub fn date_before(self, date_before: u64) -> Self {
+        Self {
+            date_before: Some(DateBefore(date_before)),
+            ..self
+        }
     }
 
     /// If this is `true`, some automatic convert between keywords and tags will be disabled.
     pub fn dsc(self, dsc: bool) -> Self {
-        Self { dsc, ..self }
+        Self {
+            dsc: Dsc(dsc),
+            ..self
+        }
+    }
+
+    /// Exclude AI artworks
+    pub fn exclude_ai(self, exclude_ai: bool) -> Self {
+        Self {
+            exclude_ai: ExcludeAI(exclude_ai),
+            ..self
+        }
     }
 }
 

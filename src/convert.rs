@@ -3,6 +3,7 @@ use std::fmt::Write;
 use crate::datatype::Category;
 use crate::datatype::DateAfter;
 use crate::datatype::DateBefore;
+use crate::datatype::Dsc;
 use crate::datatype::Keyword;
 use crate::datatype::Proxy;
 use crate::datatype::Size;
@@ -95,9 +96,9 @@ impl Parameterize for Option<DateBefore> {
     }
 }
 
-impl Parameterize for bool {
+impl Parameterize for Dsc {
     fn param(&self, url: &mut String) {
-        if *self {
+        if self.0 {
             let _ = url.write_fmt(format_args!("&dsc=true"));
         }
     }
