@@ -307,6 +307,7 @@ impl Display for Request {
         url.append(&self.tag);
         url.append(&self.uid);
         url.append(&self.exclude_ai);
+        url.append(&self.aspect_ratio);
 
         write!(f, "{}", url)
     }
