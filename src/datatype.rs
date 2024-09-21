@@ -110,14 +110,15 @@ impl Request {
 
     /// set amount of result's artworks. 0-100 is allowed.
     pub fn num(self, amount: u8) -> Result<Self, Error> {
-        if (0..=100).contains(&amount) {
+        let valid_range = 1..=20;
+        if valid_range.contains(&(amount as usize)) {
             Ok(Self {
                 num: amount,
                 ..self
             })
         } else {
             Err(Error::OutOfRange {
-                range: 0..=100,
+                range: valid_range,
                 actual: amount as usize,
                 filed: "",
             })

@@ -31,7 +31,7 @@ fn test_num_out_of_range() {
     assert_eq!(
         out_of_range(),
         Err(Error::OutOfRange {
-            range: 0..=100,
+            range: 1..=20,
             actual: 200,
             filed: ""
         })
