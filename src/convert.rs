@@ -1,5 +1,6 @@
 use std::fmt::Write;
 
+use crate::datatype::AspectRatio;
 use crate::datatype::Category;
 use crate::datatype::DateAfter;
 use crate::datatype::DateBefore;
@@ -112,6 +113,14 @@ impl Parameterize for ExcludeAI {
     fn param(&self, url: &mut String) {
         if self.0 {
             let _ = url.write_fmt(format_args!("&excludeAI={}", self.0));
+        }
+    }
+}
+
+impl Parameterize for AspectRatio {
+    fn param(&self, url: &mut String) {
+        if let Some(s) = &self.0 {
+            let _ = url.write_fmt(format_args!("&aspectRatio={s}"));
         }
     }
 }

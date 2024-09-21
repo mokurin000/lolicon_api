@@ -60,6 +60,9 @@ pub enum Error {
     },
     #[error("each tag condition could only contain at most 20 OR tags!")]
     InvalidTag,
+    #[cfg(feature = "aspect_validate")]
+    #[error("aspect ratio must match regex")]
+    InvalidAspectRatio,
 }
 
 #[must_use]
@@ -87,6 +90,8 @@ pub struct Request {
     dsc: Dsc,
     /// exclude AI artworks
     exclude_ai: ExcludeAI,
+    /// aspect ratio
+    aspect_ratio: AspectRatio,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -104,6 +109,9 @@ pub(crate) struct Dsc(pub bool);
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct ExcludeAI(pub bool);
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct AspectRatio(pub Option<String>);
+
 impl std::default::Default for Request {
     fn default() -> Self {
         Request {
@@ -118,6 +126,7 @@ impl std::default::Default for Request {
             date_before: None,
             dsc: Dsc(false),
             exclude_ai: ExcludeAI(false),
+            aspect_ratio: AspectRatio(None),
         }
     }
 }
@@ -251,6 +260,35 @@ impl Request {
             exclude_ai: ExcludeAI(exclude_ai),
             ..self
         }
+    }
+
+    /// filter aspect ratio
+    ///
+    /// format: `<gt|gte|lt|lte|eq><decimal>`, once or twice
+    ///
+    /// example: `gte1.777lte1.778`
+    ///
+    /// when `aspect_validate` is disabled, this always return `Ok(_)`
+    pub fn aspect_ratio(self, aspect_ratio: impl AsRef<str>) -> Result<Self, Error> {
+        let aspect_ratio = aspect_ratio.as_ref();
+
+        #[cfg(feature = "aspect_validate")]
+        {
+            use regex::Regex;
+            use std::sync::LazyLock;
+
+            static RE: LazyLock<Regex> =
+                LazyLock::new(|| Regex::new(r#"^((gt|gte|lt|lte|eq)[\d.]+){1,2}$"#).unwrap());
+
+            if RE.is_match(aspect_ratio) {
+                Err(Error::InvalidAspectRatio)?
+            }
+        }
+
+        Ok(Self {
+            aspect_ratio: AspectRatio(Some(aspect_ratio.into())),
+            ..self
+        })
     }
 }
 

@@ -12,3 +12,8 @@ edition = "2021"
 [dependencies]
 thiserror = "1.0.32"
 strum = { version = "0.26.3", features = ["derive"] }
+regex = { version = "1.10.6", optional = true }
+
+[features]
+default = ["aspect_validate"]
+aspect_validate = ["dep:regex"]
