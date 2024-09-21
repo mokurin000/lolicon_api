@@ -58,6 +58,8 @@ pub enum Error {
         actual: usize,
         filed: &'static str,
     },
+    #[error("each tag condition could only contain at most 20 OR tags!")]
+    InvalidTag,
 }
 
 #[must_use]
@@ -169,17 +171,28 @@ impl Request {
     }
 
     /// set tags.
+    ///
+    /// You can provide at most 3 AND tag groups.
+    ///
+    /// each AND tag group contains at most 20 OR tags splitted by `|`
     pub fn tag(self, tag: &[impl AsRef<str>]) -> Result<Self, Error> {
-        if (1..=20).contains(&tag.len()) {
+        if (0..=3).contains(&tag.len()) {
+            if tag
+                .iter()
+                .map(AsRef::as_ref)
+                .any(|s| s.split("|").count() > 20)
+            {
+                Err(Error::InvalidTag)?
+            }
             Ok(Self {
                 tag: Tag(tag.iter().map(AsRef::as_ref).map(String::from).collect()),
                 ..self
             })
         } else {
             Err(Error::OutOfRange {
-                range: 1..=20,
+                range: 0..=3,
                 actual: tag.len(),
-                filed: "tag",
+                filed: "AND tag",
             })
         }
     }
