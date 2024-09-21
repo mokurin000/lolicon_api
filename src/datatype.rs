@@ -67,15 +67,15 @@ pub struct Request {
     category: Category,
     /// amount of result's artworks. 1-100 is allowed.
     num: u8,
-    /// specified authors. at most 20s, at least one.
+    /// specified authors. at least one, at most 20.
     uid: Vec<u32>,
-    /// Not very convenient. you should consider use `tag` instead.
+    /// Not very convenient. you should consider using `tag` instead.
     keyword: Option<Keyword>,
-    /// at most 20s, at least one.
+    /// at least one, at most 20.
     tag: Vec<String>,
     /// size of images.
     size: Size,
-    /// proxy for `pixiv.net`, `i.pixiv.cat`, e.g. See [Lolicon](https://api.lolicon.app/#/setu?id=proxy) for detail.
+    /// proxy for `pixiv.net`. `i.pixiv.cat` by default. See [Lolicon](https://api.lolicon.app/#/setu?id=proxy) for detail.
     proxy: Proxy,
     /// Only show artworks after this UNIX time in millisecond.
     date_after: Option<DateAfter>,
