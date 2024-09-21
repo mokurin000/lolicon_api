@@ -11,11 +11,12 @@
 //!     .category(Category::R18) // R-18
 //!     .num(1).unwrap() // 一张
 //!     .uid(&[16731]).unwrap() // 玉之けだま老师
+//!     .exclude_ai(true) // 排除AI图
 //!     .size(&[ImageSize::Original]).unwrap(); // 原图（默认行为）
 //!
 //! let req_url = String::from(req);
 //!
-//! assert_eq!(&req_url, "https://api.lolicon.app/setu/v2?&r18=1&uid=16731");
+//! assert_eq!(&req_url, "https://api.lolicon.app/setu/v2?&r18=1&uid=16731&excludeAI=true");
 //! ```
 //!
 //! Note: `req_url`'s params are sorted by name, and only nessacary ones(i.e. not defaults) will be passed.

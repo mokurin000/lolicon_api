@@ -255,6 +255,7 @@ impl Display for Request {
         url.append(&self.size);
         url.append(&self.tag);
         url.append(&self.uid);
+        url.append(&self.exclude_ai);
 
         write!(f, "{}", url)
     }
