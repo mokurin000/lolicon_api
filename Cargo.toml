@@ -11,4 +11,4 @@ edition = "2018"
 
 [dependencies]
 thiserror = "1.0.32"
-strum = { version = "0.24", features = ["derive"] }
+strum = { version = "0.26.3", features = ["derive"] }
