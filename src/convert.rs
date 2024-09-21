@@ -4,9 +4,13 @@ use crate::datatype::Category;
 use crate::datatype::DateAfter;
 use crate::datatype::DateBefore;
 use crate::datatype::Dsc;
+use crate::datatype::ExcludeAI;
 use crate::datatype::Keyword;
+use crate::datatype::Num;
 use crate::datatype::Proxy;
 use crate::datatype::Size;
+use crate::datatype::Tag;
+use crate::datatype::Uid;
 use crate::ImageSize;
 
 pub trait Parameterize {
@@ -24,18 +28,10 @@ impl Parameterize for Category {
     }
 }
 
-impl Parameterize for u8 {
+impl Parameterize for Uid {
     fn param(&self, url: &mut String) {
-        if self != &1 {
-            let _ = url.write_fmt(format_args!("&num={self}"));
-        }
-    }
-}
-
-impl Parameterize for Vec<u32> {
-    fn param(&self, url: &mut String) {
-        if !self.is_empty() {
-            for uid in self {
+        if !self.0.is_empty() {
+            for uid in &self.0 {
                 let _ = url.write_fmt(format_args!("&uid={uid}"));
             }
         }
@@ -50,10 +46,10 @@ impl Parameterize for Option<Keyword> {
     }
 }
 
-impl Parameterize for Vec<String> {
+impl Parameterize for Tag {
     fn param(&self, url: &mut String) {
-        if !self.is_empty() {
-            for tag in self {
+        if !self.0.is_empty() {
+            for tag in &self.0 {
                 let _ = url.write_fmt(format_args!("&tag={tag}"));
             }
         }
@@ -100,6 +96,22 @@ impl Parameterize for Dsc {
     fn param(&self, url: &mut String) {
         if self.0 {
             let _ = url.write_fmt(format_args!("&dsc=true"));
+        }
+    }
+}
+
+impl Parameterize for Num {
+    fn param(&self, url: &mut String) {
+        if self.0 != 1 {
+            let _ = url.write_fmt(format_args!("&num={}", self.0));
+        }
+    }
+}
+
+impl Parameterize for ExcludeAI {
+    fn param(&self, url: &mut String) {
+        if self.0 {
+            let _ = url.write_fmt(format_args!("&excludeAI={}", self.0));
         }
     }
 }

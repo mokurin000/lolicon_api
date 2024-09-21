@@ -65,14 +65,14 @@ pub enum Error {
 pub struct Request {
     /// Non-R18 by default.
     category: Category,
-    /// amount of result's artworks. 1-100 is allowed.
-    num: u8,
+    /// amount of result's artworks. 1~20 is allowed.
+    num: Num,
     /// specified authors. at least one, at most 20.
-    uid: Vec<u32>,
+    uid: Uid,
     /// Not very convenient. you should consider using `tag` instead.
     keyword: Option<Keyword>,
     /// at least one, at most 20.
-    tag: Vec<String>,
+    tag: Tag,
     /// size of images.
     size: Size,
     /// proxy for `pixiv.net`. `i.pixiv.cat` by default. See [Lolicon](https://api.lolicon.app/#/setu?id=proxy) for detail.
@@ -87,6 +87,15 @@ pub struct Request {
     exclude_ai: ExcludeAI,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct Uid(pub Vec<u32>);
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct Tag(pub Vec<String>);
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) struct Num(pub u8);
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct Dsc(pub bool);
 
@@ -97,10 +106,10 @@ impl std::default::Default for Request {
     fn default() -> Self {
         Request {
             category: Category::NonR18,
-            num: 1,
-            uid: vec![],
+            num: Num(1),
+            uid: Uid(vec![]),
             keyword: None,
-            tag: vec![],
+            tag: Tag(vec![]),
             size: Size(vec![ImageSize::Original]),
             proxy: Proxy("i.pixiv.cat".into()),
             date_after: None,
@@ -122,7 +131,7 @@ impl Request {
         let valid_range = 1..=20;
         if valid_range.contains(&(amount as usize)) {
             Ok(Self {
-                num: amount,
+                num: Num(amount),
                 ..self
             })
         } else {
@@ -139,7 +148,7 @@ impl Request {
     pub fn uid(self, authors: &[u32]) -> Result<Self, Error> {
         if (0..=20).contains(&authors.len()) {
             Ok(Self {
-                uid: authors.into(),
+                uid: Uid(authors.into()),
                 ..self
             })
         } else {
@@ -163,7 +172,7 @@ impl Request {
     pub fn tag(self, tag: &[impl AsRef<str>]) -> Result<Self, Error> {
         if (1..=20).contains(&tag.len()) {
             Ok(Self {
-                tag: tag.iter().map(AsRef::as_ref).map(String::from).collect(),
+                tag: Tag(tag.iter().map(AsRef::as_ref).map(String::from).collect()),
                 ..self
             })
         } else {
