@@ -19,6 +19,7 @@ serde = { version = "1.0.210", default-features = false, features = [
 ], optional = true }
 
 [features]
-default = ["aspect-validate", "parse-resp"]
+default = ["aspect-validate", "parse-resp", "serde-support"]
 aspect-validate = ["dep:regex"]
 parse-resp = ["dep:serde"]
+serde-support = ["dep:serde"]

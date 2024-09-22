@@ -9,6 +9,10 @@ use std::{
 
 use thiserror::Error;
 
+#[cfg_attr(
+    feature = "serde-support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Display, EnumIter, EnumIs, EnumCount, EnumString)]
 /// Non-R18 by default.
 pub enum Category {
@@ -21,14 +25,26 @@ pub enum Category {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "serde-support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 /// Not very convenient. you should consider use tags instead.
 pub(crate) struct Keyword(pub(crate) String);
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "serde-support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 /// available values were defined in its setter.
 pub(crate) struct Size(pub(crate) Vec<ImageSize>);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Display, EnumIter, EnumIs, EnumCount, EnumString)]
+#[cfg_attr(
+    feature = "serde-support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 #[strum(serialize_all = "lowercase")]
 pub enum ImageSize {
     Original,
@@ -38,14 +54,26 @@ pub enum ImageSize {
     Mini,
 }
 
+#[cfg_attr(
+    feature = "serde-support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 /// proxy for `pixiv.net`, `i.pixiv.re` by default. See [Lolicon](https://api.lolicon.app/#/setu?id=proxy) for detail.
 pub(crate) struct Proxy(pub(crate) String);
 
+#[cfg_attr(
+    feature = "serde-support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 /// Only show artworks after this UNIX time in millisecond.
 pub(crate) struct DateAfter(pub(crate) u64);
 
+#[cfg_attr(
+    feature = "serde-support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 /// Only show artworks before this UNIX time in millisecond.
 pub(crate) struct DateBefore(pub(crate) u64);
@@ -69,6 +97,10 @@ pub enum Error {
 }
 
 #[must_use]
+#[cfg_attr(
+    feature = "serde-support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Request {
     /// Non-R18 by default.
@@ -98,21 +130,45 @@ pub struct Request {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "serde-support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub(crate) struct Uid(pub Vec<u32>);
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "serde-support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub(crate) struct Tag(pub Vec<String>);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "serde-support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub(crate) struct Num(pub u8);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "serde-support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub(crate) struct Dsc(pub bool);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "serde-support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub(crate) struct ExcludeAI(pub bool);
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "serde-support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub(crate) struct AspectRatio(pub Option<String>);
 
 impl std::default::Default for Request {
