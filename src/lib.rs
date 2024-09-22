@@ -56,4 +56,4 @@ fn out_of_range() -> Result<(), Error> {
 #[cfg(feature = "parse-resp")]
 mod resp;
 #[cfg(feature = "parse-resp")]
-pub use resp::Setu;
+pub use resp::{Setu, SetuData, SetuUrls};
