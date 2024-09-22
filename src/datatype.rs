@@ -1,4 +1,4 @@
-use strum::Display;
+use strum::{Display, EnumCount, EnumIs, EnumIter, EnumString};
 
 use crate::convert::Parameterize;
 
@@ -9,11 +9,14 @@ use std::{
 
 use thiserror::Error;
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Display, EnumIter, EnumIs, EnumCount, EnumString)]
 /// Non-R18 by default.
 pub enum Category {
+    #[strum(to_string = "non-R18", serialize = "non-r18")]
     NonR18,
+    #[strum(serialize = "r18")]
     R18,
+    #[strum(to_string = "R-18 or non-R18", serialize = "mixin")]
     Mixin,
 }
 
@@ -25,7 +28,7 @@ pub(crate) struct Keyword(pub(crate) String);
 /// available values were defined in its setter.
 pub(crate) struct Size(pub(crate) Vec<ImageSize>);
 
-#[derive(Debug, Clone, PartialEq, Eq, Display)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Display, EnumIter, EnumIs, EnumCount, EnumString)]
 #[strum(serialize_all = "lowercase")]
 pub enum ImageSize {
     Original,
