@@ -21,7 +21,7 @@ pub trait Parameterize {
 impl Parameterize for Category {
     fn param(&self, url: &mut String) {
         let argument = match self {
-            Category::NonR18 => return,
+            Category::NonR18 => "&r18=0",
             Category::R18 => "&r18=1",
             Category::Mixin => "&r18=2",
         };
@@ -31,10 +31,8 @@ impl Parameterize for Category {
 
 impl Parameterize for Uid {
     fn param(&self, url: &mut String) {
-        if !self.0.is_empty() {
-            for uid in &self.0 {
-                let _ = url.write_fmt(format_args!("&uid={uid}"));
-            }
+        for uid in &self.0 {
+            let _ = url.write_fmt(format_args!("&uid={uid}"));
         }
     }
 }
@@ -49,10 +47,8 @@ impl Parameterize for Option<Keyword> {
 
 impl Parameterize for Tag {
     fn param(&self, url: &mut String) {
-        if !self.0.is_empty() {
-            for tag in &self.0 {
-                let _ = url.write_fmt(format_args!("&tag={tag}"));
-            }
+        for tag in &self.0 {
+            let _ = url.write_fmt(format_args!("&tag={tag}"));
         }
     }
 }
@@ -71,9 +67,7 @@ impl Parameterize for Size {
 impl Parameterize for Proxy {
     fn param(&self, url: &mut String) {
         let Proxy(ref proxy) = self;
-        if proxy != "i.pixiv.cat" {
-            let _ = url.write_fmt(format_args!("&proxy={proxy}"));
-        }
+        let _ = url.write_fmt(format_args!("&proxy={proxy}"));
     }
 }
 
@@ -95,25 +89,19 @@ impl Parameterize for Option<DateBefore> {
 
 impl Parameterize for Dsc {
     fn param(&self, url: &mut String) {
-        if self.0 {
-            let _ = url.write_fmt(format_args!("&dsc=true"));
-        }
+        let _ = url.write_fmt(format_args!("&dsc=true"));
     }
 }
 
 impl Parameterize for Num {
     fn param(&self, url: &mut String) {
-        if self.0 != 1 {
-            let _ = url.write_fmt(format_args!("&num={}", self.0));
-        }
+        let _ = url.write_fmt(format_args!("&num={}", self.0));
     }
 }
 
 impl Parameterize for ExcludeAI {
     fn param(&self, url: &mut String) {
-        if self.0 {
-            let _ = url.write_fmt(format_args!("&excludeAI={}", self.0));
-        }
+        let _ = url.write_fmt(format_args!("&excludeAI={}", self.0));
     }
 }
 

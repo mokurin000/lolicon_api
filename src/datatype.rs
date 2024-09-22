@@ -36,7 +36,7 @@ pub enum ImageSize {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-/// proxy for `pixiv.net`, `i.pixiv.cat`, e.g. See [Lolicon](https://api.lolicon.app/#/setu?id=proxy) for detail.
+/// proxy for `pixiv.net`, `i.pixiv.re` by default. See [Lolicon](https://api.lolicon.app/#/setu?id=proxy) for detail.
 pub(crate) struct Proxy(pub(crate) String);
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -121,7 +121,7 @@ impl std::default::Default for Request {
             keyword: None,
             tag: Tag(vec![]),
             size: Size(vec![ImageSize::Original]),
-            proxy: Proxy("i.pixiv.cat".into()),
+            proxy: Proxy("i.pixiv.re".into()),
             date_after: None,
             date_before: None,
             dsc: Dsc(false),
