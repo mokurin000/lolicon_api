@@ -52,3 +52,8 @@ fn out_of_range() -> Result<(), Error> {
         .num(200)?;
     Ok(())
 }
+
+#[cfg(feature = "parse-resp")]
+mod resp;
+#[cfg(feature = "parse-resp")]
+pub use resp::Setu;

@@ -63,7 +63,7 @@ pub enum Error {
     },
     #[error("each tag condition could only contain at most 20 OR tags!")]
     InvalidTag,
-    #[cfg(feature = "aspect_validate")]
+    #[cfg(feature = "aspect-validate")]
     #[error("aspect ratio must match regex")]
     InvalidAspectRatio,
 }
@@ -275,7 +275,7 @@ impl Request {
     pub fn aspect_ratio(self, aspect_ratio: impl AsRef<str>) -> Result<Self, Error> {
         let aspect_ratio = aspect_ratio.as_ref();
 
-        #[cfg(feature = "aspect_validate")]
+        #[cfg(feature = "aspect-validate")]
         {
             use regex::Regex;
             use std::sync::LazyLock;

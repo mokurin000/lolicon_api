@@ -13,7 +13,12 @@ edition = "2021"
 thiserror = "1.0.64"
 strum = { version = "0.26.3", features = ["derive"] }
 regex = { version = "1.10.6", optional = true }
+serde = { version = "1.0.210", default-features = false, features = [
+    "derive",
+    "std",
+], optional = true }
 
 [features]
-default = ["aspect_validate"]
-aspect_validate = ["dep:regex"]
+default = ["aspect-validate", "parse-resp"]
+aspect-validate = ["dep:regex"]
+parse-resp = ["dep:serde"]
