@@ -28,6 +28,9 @@ mod datatype;
 pub use datatype::Request;
 pub use datatype::{Category, Error, ImageSize};
 
+/// pub-reexport strum for strum traits
+pub use strum;
+
 #[test]
 fn test_num_out_of_range() {
     assert_eq!(
