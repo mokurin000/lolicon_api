@@ -280,7 +280,7 @@ impl Request {
             static RE: LazyLock<Regex> =
                 LazyLock::new(|| Regex::new(r#"^((gt|gte|lt|lte|eq)[\d.]+){1,2}$"#).unwrap());
 
-            if RE.is_match(aspect_ratio) {
+            if !RE.is_match(aspect_ratio) {
                 Err(Error::InvalidAspectRatio)?
             }
         }
