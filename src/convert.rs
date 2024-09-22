@@ -74,7 +74,7 @@ impl Parameterize for Proxy {
 impl Parameterize for Option<DateAfter> {
     fn param(&self, url: &mut String) {
         if let Some(DateAfter(date)) = self {
-            let _ = url.write_fmt(format_args!("&dataAfter={date}"));
+            let _ = url.write_fmt(format_args!("&dateAfter={date}"));
         }
     }
 }
@@ -82,7 +82,7 @@ impl Parameterize for Option<DateAfter> {
 impl Parameterize for Option<DateBefore> {
     fn param(&self, url: &mut String) {
         if let Some(DateBefore(date)) = self {
-            let _ = url.write_fmt(format_args!("&dataBefore={date}"));
+            let _ = url.write_fmt(format_args!("&dateBefore={date}"));
         }
     }
 }
