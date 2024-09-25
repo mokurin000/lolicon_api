@@ -1,4 +1,4 @@
-use strum::{Display, EnumCount, EnumIs, EnumIter, EnumString};
+use strum::{Display, EnumCount, EnumIs, EnumIter};
 
 use crate::convert::Parameterize;
 
@@ -13,14 +13,12 @@ use thiserror::Error;
     feature = "serde-support",
     derive(serde::Serialize, serde::Deserialize)
 )]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Display, EnumIter, EnumIs, EnumCount, EnumString)]
+#[cfg_attr(feature = "serde-support", serde(rename_all = "kebab-case"))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Display, EnumIter, EnumIs, EnumCount)]
 /// Non-R18 by default.
 pub enum Category {
-    #[strum(to_string = "non-R18", serialize = "non-r18")]
     NonR18,
-    #[strum(serialize = "r18")]
     R18,
-    #[strum(to_string = "R-18 or non-R18", serialize = "mixin")]
     Mixin,
 }
 
@@ -40,11 +38,12 @@ pub(crate) struct Keyword(pub(crate) String);
 /// available values were defined in its setter.
 pub(crate) struct Size(pub(crate) Vec<ImageSize>);
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Display, EnumIter, EnumIs, EnumCount, EnumString)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Display, EnumIter, EnumIs, EnumCount)]
 #[cfg_attr(
     feature = "serde-support",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[cfg_attr(feature = "serde-support", serde(rename_all = "kebab-case"))]
 #[strum(serialize_all = "lowercase")]
 pub enum ImageSize {
     Original,
@@ -101,6 +100,7 @@ pub enum Error {
     feature = "serde-support",
     derive(serde::Serialize, serde::Deserialize)
 )]
+#[cfg_attr(feature = "serde-support", serde(rename_all = "kebab-case"))]
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Request {
     /// Non-R18 by default.
